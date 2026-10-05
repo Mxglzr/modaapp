@@ -3,6 +3,8 @@ package com.sanchez.modaapp.adapter
 import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.sanchez.modaapp.R
 import com.sanchez.modaapp.databinding.ItemCatalogoBinding
@@ -29,11 +31,17 @@ class CatalogoAdapter(
             tvCatalogoPrecio.text = "S/ ${String.format("%.2f", ropa.precio)}"
 
             if (ropa.foto.isNotEmpty() && File(ropa.foto).exists()) {
+                ivCatalogoFoto.setPadding(0, 0, 0, 0)
+                ivCatalogoFoto.scaleType = ImageView.ScaleType.CENTER_CROP
+                ivCatalogoFoto.clearColorFilter()
                 ivCatalogoFoto.imageTintList = null
                 ivCatalogoFoto.setImageBitmap(BitmapFactory.decodeFile(ropa.foto))
             } else {
+                val pad = (36 * root.resources.displayMetrics.density).toInt()
+                ivCatalogoFoto.setPadding(pad, pad, pad, pad)
+                ivCatalogoFoto.scaleType = ImageView.ScaleType.FIT_CENTER
                 ivCatalogoFoto.setImageResource(R.drawable.ic_menu_ropa)
-                ivCatalogoFoto.setColorFilter(root.context.getColor(R.color.primary))
+                ivCatalogoFoto.setColorFilter(ContextCompat.getColor(root.context, R.color.primary))
             }
 
             btnItemAgregarCarrito.setOnClickListener { onAgregarClick(ropa) }

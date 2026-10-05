@@ -4,10 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="8dp"
+    android:layout_marginHorizontal="12dp"
     android:layout_marginVertical="6dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
     app:cardBackgroundColor="@color/white"
-    app:cardCornerRadius="14dp"
+    app:cardCornerRadius="16dp"
     app:cardElevation="2dp"
     app:strokeColor="@color/stroke_card"
     app:strokeWidth="1dp">
@@ -19,27 +22,32 @@
         android:orientation="horizontal"
         android:padding="12dp">
 
-        <!-- Miniatura de Foto / Placeholder -->
+        <!-- Miniatura de Foto / Icono de Soporte -->
         <com.google.android.material.card.MaterialCardView
-            android:layout_width="68dp"
-            android:layout_height="68dp"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
             app:cardBackgroundColor="@color/fondo_icono_ropa"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="0dp">
+            app:cardCornerRadius="14dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/stroke_card"
+            app:strokeWidth="1dp">
 
             <ImageView
                 android:id="@+id/ivItemRopaFoto"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:scaleType="centerCrop"
+                android:padding="16dp"
+                android:scaleType="fitCenter"
                 android:src="@drawable/ic_menu_ropa"
                 app:tint="@color/primary" />
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Información: Modelo, Detalles y Precio -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="14dp"
+            android:layout_marginEnd="8dp"
             android:layout_weight="1"
             android:orientation="vertical">
 
@@ -47,6 +55,8 @@
                 android:id="@+id/tvItemRopaModelo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:text="Polo Oversize Urban"
                 android:textColor="@color/text_primary"
                 android:textSize="16sp"
@@ -56,42 +66,37 @@
                 android:id="@+id/tvItemRopaDetalle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
+                android:layout_marginTop="3dp"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:text="Talla M · Color Negro · Polos"
                 android:textColor="@color/text_secondary"
-                android:textSize="12sp" />
+                android:textSize="13sp" />
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/tvItemRopaPrecio"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/tvItemRopaPrecio"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="S/ 45.00"
-                    android:textColor="@color/primary"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tvItemRopaStock"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:background="@drawable/ic_launcher_background"
-                    android:backgroundTint="@color/fondo_icono_clientes"
-                    android:paddingHorizontal="8dp"
-                    android:paddingVertical="2dp"
-                    android:text="Stock: 12"
-                    android:textColor="#2E7D32"
-                    android:textSize="11sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
+                android:text="S/ 45.00"
+                android:textColor="@color/primary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
         </LinearLayout>
+
+        <!-- Pastilla de Stock estilizada a la derecha -->
+        <TextView
+            android:id="@+id/tvItemRopaStock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/badge_stock_normal"
+            android:gravity="center"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp"
+            android:text="Stock: 12"
+            android:textColor="#2E7D32"
+            android:textSize="12sp"
+            android:textStyle="bold" />
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>
