@@ -4,22 +4,25 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.sanchez.modaapp.data.UsuarioDao
 import com.sanchez.modaapp.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
+    private lateinit var usuarioDao: UsuarioDao
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        usuarioDao = UsuarioDao(this)
         setupListeners()
     }
 
     private fun setupListeners() {
-        // HU-01: Ingreso del Administrador
+        // HU-04: Autenticación en Base de Datos SQLite (modaapp.db)
         binding.btnIngresar.setOnClickListener {
             val usuario = binding.etUsuario.text?.toString()?.trim().orEmpty()
             val clave = binding.etClave.text?.toString()?.trim().orEmpty()
@@ -42,16 +45,17 @@ class LoginActivity : AppCompatActivity() {
 
             if (hayError) return@setOnClickListener
 
-            // CA2: Validación de credenciales admin / 1234
-            if (usuario == "admin" && clave == "1234") {
+            // HU-04 CA2: Validación con consulta parametrizada a SQLite
+            val user = usuarioDao.validarUsuario(usuario, clave)
+            if (user != null) {
+                // CA3: Mostrar nombre y rol del usuario
                 val intent = Intent(this, MenuActivity::class.java).apply {
-                    putExtra("EXTRA_USUARIO", "Administrador")
-                    putExtra("EXTRA_ROL", "ADMIN")
+                    putExtra("EXTRA_USUARIO", user.usuario.replaceFirstChar { it.uppercase() })
+                    putExtra("EXTRA_ROL", user.rol)
                 }
                 startActivity(intent)
-                finish() // No regresa al login con botón atrás
+                finish()
             } else {
-                // CA3: Credenciales incorrectas
                 Toast.makeText(this, getString(R.string.msg_credenciales_incorrectas), Toast.LENGTH_SHORT).show()
             }
         }

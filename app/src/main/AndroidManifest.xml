@@ -40,6 +40,10 @@
             android:exported="false" />
 
         <activity
+            android:name=".RopaFormActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".PedidosActivity"
             android:exported="false" />
 
