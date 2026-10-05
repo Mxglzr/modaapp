@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Paleta Rosa y Negro: Boutique Moda Urbana (HU-03) -->
+    <color name="primary">#E91E63</color>
+    <color name="primary_dark">#C2185B</color>
+    <color name="primary_light">#FCE4EC</color>
+    <color name="accent">#212121</color>
+    <color name="background_light">#FDFBFC</color>
+
+    <!-- Textos con alto contraste -->
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+
+    <!-- Bordes y tarjetas -->
+    <color name="surface_card">#FFFFFFFF</color>
+    <color name="stroke_card">#F0E6EB</color>
+    <color name="stroke_input">#78909C</color>
+
+    <!-- Fondos de soporte para iconos del Menú -->
+    <color name="fondo_icono_ropa">#FCE4EC</color>
+    <color name="fondo_icono_pedidos">#FFF3E0</color>
+    <color name="fondo_icono_clientes">#E8F5E9</color>
+    <color name="fondo_icono_reportes">#EDE7F6</color>
+    <color name="fondo_icono_catalogo">#FCE4EC</color>
+    <color name="fondo_icono_carrito">#FCE4EC</color>
+
+    <!-- WhatsApp -->
+    <color name="color_whatsapp">#25D366</color>
+</resources>
