@@ -1,8 +1,10 @@
 package com.sanchez.modaapp
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.sanchez.modaapp.databinding.ActivityMenuBinding
 
 class MenuActivity : AppCompatActivity() {
@@ -39,11 +41,23 @@ class MenuActivity : AppCompatActivity() {
             startActivity(Intent(this, ReportesActivity::class.java))
         }
 
-        // HU-02 CA3: Salir y volver al Login
+        // HU-02 CA3 y HU-13 CA2: Salir, limpiar sesión y volver al Login
         binding.btnSalir.setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-            finish()
+            MaterialAlertDialogBuilder(this)
+                .setTitle("Cerrar Sesión")
+                .setMessage("¿Estás seguro de que deseas salir del sistema?")
+                .setPositiveButton("Sí, Salir") { _, _ ->
+                    val prefs = getSharedPreferences(LoginActivity.PREFS_NAME, Context.MODE_PRIVATE)
+                    prefs.edit().clear().apply()
+
+                    val intent = Intent(this, LoginActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    }
+                    startActivity(intent)
+                    finish()
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
         }
     }
 }

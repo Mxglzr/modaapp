@@ -121,12 +121,25 @@
                 android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- CheckBox Recordar Sesión (HU-13) -->
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/cbRecordarSesion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Recordar sesión"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp"
+            app:buttonTint="@color/primary"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tilClave" />
+
         <!-- Botón Ingresar -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnIngresar"
             android:layout_width="0dp"
             android:layout_height="56dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             android:backgroundTint="@color/primary"
             android:text="@string/btn_ingresar"
             android:textAllCaps="false"
@@ -136,7 +149,7 @@
             app:elevation="2dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tilClave" />
+            app:layout_constraintTop_toBottomOf="@id/cbRecordarSesion" />
 
         <!-- Botón Ver Catálogo como Cliente (Acceso libre HU-01 CA5) -->
         <com.google.android.material.button.MaterialButton
