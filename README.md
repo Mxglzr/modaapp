@@ -1,59 +1,66 @@
-# 👗 ModaApp · Sprint 2: Base de Datos SQLite v1, Ropa con Fotos y Catálogo
+# 🛒 ModaApp · Sprint 3: Base de Datos v2, Carrito y Pedidos con Teléfono
 
-> **Rama:** `Sprint2` *(Incluye todo lo desarrollado en Sprint 1)*  
-> **Objetivo del Sprint:** Implementar la base de datos local SQLite (`modaapp.db`), el registro y listado de prendas de vestir con captura de fotos desde la galería, y el catálogo interactivo para clientes clasificado por categorías de moda.
+> **Rama:** `Sprint3` *(Incluye todo lo desarrollado en Sprint 1 y Sprint 2)*  
+> **Objetivo del Sprint:** Actualizar la base de datos a la versión 2, incorporar edición y búsqueda en tiempo real de ropa, implementar el carrito de compras con control de cantidades y permitir el registro de pedidos comerciales identificando clientes por su teléfono.
 
 ---
 
 ## 🎯 Historias de Usuario Implementadas
 
-### 📌 HU-04: Autenticación en Base de Datos SQLite
-- **CA1:** Creación de base de datos SQLite `modaapp.db` (versión 1) con tabla `usuario` y `categoria`.
-- **CA2:** Precarga automática de usuario por defecto (`admin` / `admin123`) con rol `ADMIN`.
-- **CA3:** Validación segura mediante consulta parametrizada con `?` en `UsuarioDao` para prevenir inyección SQL.
+### 📌 HU-07: Búsqueda, Edición y Eliminación de Ropa
+- **CA1:** Edición de datos de una prenda (modelo, talla, color, precio, stock, categoría y foto) en `RopaFormActivity`.
+- **CA2:** Eliminación segura con confirmación: valida mediante SQLite si la prenda tiene pedidos asociados (`tienePedidos`). Si tiene pedidos, bloquea la eliminación para proteger la integridad referencial.
+- **CA3:** Búsqueda en tiempo real en `RopaActivity` por modelo, marca o color mediante `TextWatcher` y consulta `LIKE` insensible a mayúsculas.
 
-### 📌 HU-05: Registro de Ropa con Foto y Categoría
-- **CA1:** Formulario de registro en `RopaFormActivity` con selector de fotos desde la galería del dispositivo.
-- **CA2:** Guardado seguro de imágenes en el almacenamiento interno de la app (`filesDir/ropa_fotos`).
-- **CA3:** Selectores desplegables (`AutoCompleteTextView`) para categorías (Polos, Vestidos, Casacas, Pantalones, Accesorios) y tallas estándar (XS, S, M, L, XL).
-- **CA4:** Validaciones numéricas de stock ($\ge 0$) y precio unitario ($> 0$).
-- **CA5:** Listado de prendas en `RopaActivity` mediante `RecyclerView` con diseño de tarjetas Material 3.
+### 📌 HU-08: Carrito de Compras
+- **CA1:** Botón "Agregar al Carrito" en cada prenda del catálogo con selector de cantidad ($1 \dots \text{stock}$).
+- **CA2:** Singleton `Carrito` en memoria para persistencia durante la sesión de compra.
+- **CA3:** Contador / badge dinámico en el icono de carrito de la barra superior.
+- **CA4:** Pantalla `CarritoActivity` con listado de prendas, precio unitario, cantidad, cálculo de subtotal y total general.
+- **CA5:** Botón para eliminar prendas del carrito con recálculo automático y vaciado si queda sin ítems.
 
-### 📌 HU-06: Catálogo de Prendas por Categorías
-- **CA1:** Pantalla `CatalogoActivity` con cuadrícula de 2 columnas (`GridLayoutManager`).
-- **CA2:** Filtro dinámico superior mediante `ChipGroup` con categorías cargadas directamente de SQLite.
-- **CA3:** Visualización de foto de prenda, nombre del modelo, talla, categoría y precio en S/.
+### 📌 HU-09: Identificación de Cliente y Registro de Pedidos
+- **CA1:** Pantalla `PedidoCheckoutActivity`: ingreso del número de teléfono celular (exactamente 9 dígitos numéricos).
+- **CA2:** Consulta instantánea a SQLite en tabla `cliente`:
+  - Si el cliente ya existe: saluda por su nombre y autocompleta los datos.
+  - Si es cliente nuevo: solicita nombres y apellidos y lo registra en la base de datos.
+- **CA3:** Registro de pedido y sus líneas de detalle utilizando una **transacción atómica SQLite** (`db.beginTransaction()`). Si ocurre cualquier fallo, revierte la operación asegurando consistencia.
+- **CA4:** Generación del pedido en estado `"PENDIENTE"` y redirección a `PedidoConfirmadoActivity`.
 
 ---
 
-## 🗄️ Modelo de Datos SQLite (Versión 1)
+## 🗄️ Modelo de Datos SQLite (Versión 2)
+
+Se añaden 3 nuevas tablas mediante `DBHelper.onUpgrade()`:
 
 ```sql
-CREATE TABLE usuario (
+CREATE TABLE cliente (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    usuario TEXT UNIQUE NOT NULL,
-    clave TEXT NOT NULL,
-    rol TEXT NOT NULL,
-    telefono TEXT
+    telefono TEXT UNIQUE NOT NULL,
+    nombres TEXT NOT NULL,
+    apellidos TEXT NOT NULL,
+    fecha_registro TEXT NOT NULL
 );
 
-CREATE TABLE categoria (
+CREATE TABLE pedido (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    nombre TEXT NOT NULL,
-    descripcion TEXT
+    id_cliente INTEGER NOT NULL,
+    fecha TEXT NOT NULL,
+    total REAL NOT NULL,
+    estado TEXT NOT NULL DEFAULT 'PENDIENTE',
+    fecha_atencion TEXT,
+    FOREIGN KEY(id_cliente) REFERENCES cliente(id)
 );
 
-CREATE TABLE ropa (
+CREATE TABLE detalle_pedido (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    id_categoria INTEGER NOT NULL,
-    modelo TEXT NOT NULL,
-    marca TEXT NOT NULL,
-    talla TEXT NOT NULL,
-    color TEXT NOT NULL,
-    precio REAL NOT NULL,
+    id_pedido INTEGER NOT NULL,
+    id_ropa INTEGER NOT NULL,
     cantidad INTEGER NOT NULL,
-    foto TEXT,
-    FOREIGN KEY(id_categoria) REFERENCES categoria(id)
+    precio_unit REAL NOT NULL,
+    subtotal REAL NOT NULL,
+    FOREIGN KEY(id_pedido) REFERENCES pedido(id),
+    FOREIGN KEY(id_ropa) REFERENCES ropa(id)
 );
 ```
 
@@ -62,6 +69,6 @@ CREATE TABLE ropa (
 ## 🚀 Cómo Ejecutar
 
 ```bash
-git checkout Sprint2
+git checkout Sprint3
 ./gradlew assembleDebug
 ```
