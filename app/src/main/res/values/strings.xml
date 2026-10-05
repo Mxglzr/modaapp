@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">ModaApp</string>
+    <string name="business_name">Boutique Moda Urbana</string>
+    
+    <!-- Login -->
+    <string name="label_usuario">Usuario</string>
+    <string name="label_contrasena">Contraseña</string>
+    <string name="btn_ingresar">Ingresar</string>
+    <string name="btn_ver_catalogo">Ver catálogo como cliente</string>
+    <string name="error_campo_vacio">Este campo no puede estar vacío</string>
+    <string name="msg_credenciales_incorrectas">Credenciales incorrectas</string>
+    <string name="hint_prueba">Credenciales de prueba: admin / 1234</string>
+
+    <!-- Menú Administrador -->
+    <string name="menu_titulo">Panel de Administración</string>
+    <string name="menu_bienvenida">Bienvenido, %1$s (%2$s)</string>
+    <string name="menu_ropa">Ropa</string>
+    <string name="menu_ropa_desc">Prendas y stock</string>
+    <string name="menu_pedidos">Pedidos</string>
+    <string name="menu_pedidos_desc">Atención y ventas</string>
+    <string name="menu_clientes">Clientes</string>
+    <string name="menu_clientes_desc">Directorio telefónico</string>
+    <string name="menu_reportes">Reportes</string>
+    <string name="menu_reportes_desc">Métricas y balances</string>
+    <string name="btn_salir">Cerrar sesión</string>
+
+    <!-- Catálogo y Carrito -->
+    <string name="catalogo_titulo">Catálogo de Moda</string>
+    <string name="carrito_titulo">Mi Carrito</string>
+    <string name="btn_hacer_pedido">Hacer Pedido</string>
+    <string name="carrito_vacio">Tu carrito está vacío</string>
+</resources>

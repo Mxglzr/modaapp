@@ -1,0 +1,15 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Tema Base ModaApp (HU-03 Paleta Rosa y Negro) -->
+    <style name="Base.Theme.MODAAPP" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/accent</item>
+        <item name="android:statusBarColor">@color/primary_dark</item>
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:editTextColor">@color/text_primary</item>
+        <item name="editTextColor">@color/text_primary</item>
+        <item name="colorOutline">#78909C</item>
+    </style>
+
+    <style name="Theme.MODAAPP" parent="Base.Theme.MODAAPP" />
+</resources>
