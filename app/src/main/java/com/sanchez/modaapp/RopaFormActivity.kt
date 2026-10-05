@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.sanchez.modaapp.data.CategoriaDao
 import com.sanchez.modaapp.data.RopaDao
 import com.sanchez.modaapp.databinding.ActivityRopaFormBinding
@@ -28,7 +29,6 @@ class RopaFormActivity : AppCompatActivity() {
     private var rutaFotoSeleccionada: String = ""
     private var ropaEdicion: Ropa? = null
 
-    // HU-05 CA1: Selector de foto de la galería
     private val seleccionarFotoLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let { copiarFotoAAlmacenamientoInterno(it) }
     }
@@ -47,7 +47,6 @@ class RopaFormActivity : AppCompatActivity() {
     }
 
     private fun setupDropdowns() {
-        // Cargar categorías de la base de datos (HU-05 CA2)
         categorias = categoriaDao.listar()
         val nombresCategorias = categorias.map { it.nombre }
         val adapterCat = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, nombresCategorias)
@@ -56,11 +55,10 @@ class RopaFormActivity : AppCompatActivity() {
             binding.actvCategoria.setText(nombresCategorias[0], false)
         }
 
-        // Dropdown de Tallas
         val adapterTalla = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, tallas)
         binding.actvTalla.setAdapter(adapterTalla)
         if (tallas.isNotEmpty() && ropaEdicion == null) {
-            binding.actvTalla.setText(tallas[1], false) // "S" por defecto
+            binding.actvTalla.setText(tallas[1], false)
         }
     }
 
@@ -69,6 +67,7 @@ class RopaFormActivity : AppCompatActivity() {
         ropaEdicion = intent.getSerializableExtra("EXTRA_ROPA") as? Ropa
 
         ropaEdicion?.let { r ->
+            // HU-07 CA1: Modo edición
             binding.tvTituloRopaForm.text = "Editar Prenda"
             binding.btnGuardarRopa.text = "Actualizar Prenda"
             binding.btnEliminarRopa.visibility = View.VISIBLE
@@ -99,6 +98,36 @@ class RopaFormActivity : AppCompatActivity() {
         binding.btnGuardarRopa.setOnClickListener {
             guardarOActualizar()
         }
+
+        // HU-07 CA2: Eliminar prenda
+        binding.btnEliminarRopa.setOnClickListener {
+            confirmarEliminar()
+        }
+    }
+
+    private fun confirmarEliminar() {
+        val id = ropaEdicion?.id ?: return
+
+        // CA2: Verificar si tiene pedidos asociados
+        if (ropaDao.tienePedidos(id)) {
+            Toast.makeText(this, "No se puede eliminar: tiene pedidos", Toast.LENGTH_LONG).show()
+            return
+        }
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Confirmar eliminación")
+            .setMessage("¿Está seguro de eliminar esta prenda del inventario?")
+            .setPositiveButton("Eliminar") { _, _ ->
+                val eliminados = ropaDao.eliminar(id)
+                if (eliminados > 0) {
+                    Toast.makeText(this, "Prenda eliminada", Toast.LENGTH_SHORT).show()
+                    finish()
+                } else {
+                    Toast.makeText(this, "Error al eliminar prenda", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
     }
 
     private fun copiarFotoAAlmacenamientoInterno(uri: Uri) {
@@ -129,7 +158,6 @@ class RopaFormActivity : AppCompatActivity() {
         val precioStr = binding.etPrecio.text?.toString()?.trim().orEmpty()
         val cantStr = binding.etCantidad.text?.toString()?.trim().orEmpty()
 
-        // Validaciones (HU-05 CA3)
         var hayError = false
         if (modelo.isEmpty()) {
             binding.tilModelo.error = "Ingrese el modelo de la prenda"
@@ -171,7 +199,7 @@ class RopaFormActivity : AppCompatActivity() {
 
         if (hayError) return
 
-        val nuevaRopa = Ropa(
+        val prenda = Ropa(
             id = ropaEdicion?.id ?: 0,
             modelo = modelo,
             idCategoria = categoria!!.id,
@@ -180,15 +208,26 @@ class RopaFormActivity : AppCompatActivity() {
             color = color,
             precio = precio,
             cantidad = cantidad,
-            foto = rutaFotoSeleccionada
+            foto = if (rutaFotoSeleccionada.isNotEmpty()) rutaFotoSeleccionada else ropaEdicion?.foto ?: ""
         )
 
-        val idInsertado = ropaDao.insertar(nuevaRopa)
-        if (idInsertado > 0) {
-            Toast.makeText(this, "Prenda registrada con éxito", Toast.LENGTH_SHORT).show()
-            finish()
+        if (ropaEdicion == null) {
+            val idInsertado = ropaDao.insertar(prenda)
+            if (idInsertado > 0) {
+                Toast.makeText(this, "Prenda registrada con éxito", Toast.LENGTH_SHORT).show()
+                finish()
+            } else {
+                Toast.makeText(this, "Error al registrar la prenda", Toast.LENGTH_SHORT).show()
+            }
         } else {
-            Toast.makeText(this, "Error al registrar la prenda", Toast.LENGTH_SHORT).show()
+            // HU-07: Actualizar
+            val filas = ropaDao.actualizar(prenda)
+            if (filas > 0) {
+                Toast.makeText(this, "Prenda actualizada", Toast.LENGTH_SHORT).show()
+                finish()
+            } else {
+                Toast.makeText(this, "Error al actualizar", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }

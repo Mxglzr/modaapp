@@ -51,12 +51,38 @@ class RopaActivity : AppCompatActivity() {
             val intent = Intent(this, RopaFormActivity::class.java)
             startActivity(intent)
         }
+
+        // HU-07 CA3: Búsqueda en tiempo real por modelo, marca o color
+        binding.etBuscarRopa.addTextChangedListener(object : android.text.TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                buscarPrendas(s?.toString().orEmpty())
+            }
+            override fun afterTextChanged(s: android.text.Editable?) {}
+        })
     }
 
     private fun cargarPrendas() {
-        val lista = ropaDao.listar()
-        adapter.actualizarLista(lista)
+        val query = binding.etBuscarRopa.text?.toString().orEmpty()
+        if (query.isNotBlank()) {
+            buscarPrendas(query)
+        } else {
+            val lista = ropaDao.listar()
+            mostrarLista(lista)
+        }
+    }
 
+    private fun buscarPrendas(filtro: String) {
+        val lista = if (filtro.isBlank()) {
+            ropaDao.listar()
+        } else {
+            ropaDao.buscar(filtro)
+        }
+        mostrarLista(lista)
+    }
+
+    private fun mostrarLista(lista: List<com.sanchez.modaapp.model.Ropa>) {
+        adapter.actualizarLista(lista)
         if (lista.isEmpty()) {
             binding.tvRopaVacia.visibility = View.VISIBLE
             binding.rvRopa.visibility = View.GONE
